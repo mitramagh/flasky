@@ -104,7 +104,8 @@ def get_one_cat(cat_id):
     rsp = {
         "id" : chosen_cat.id,
         "name" : chosen_cat.name,
-        "color": chosen_cat.color
+        "color": chosen_cat.color,
+        "age": chosen_cat.age
     }
 
     return jsonify(rsp), 200
@@ -113,19 +114,19 @@ def get_one_cat(cat_id):
     # update chosen cat
 @cats_bp.route("/<cat_id>", methods=["PUT"])
 def update_one_cat(cat_id):
-    try:
-        cat_id = int (cat_id)
-    except ValueError:
-        rsp =  {"msg": f"Invalid id:{cat_id}"}
-        return jsonify(rsp), 400
-    chosen_cat = (cat_id)
+    # try:
+    #     cat_id = int (cat_id)
+    # except ValueError:
+    #     rsp =  {"msg": f"Invalid id:{cat_id}"}
+    #     return jsonify(rsp), 400
+    chosen_cat = get_cat_or_abort(cat_id)
 
     #     for cat in cats:
     #         if cat.id == cat_id:
     #             chosen_cat = cat
     #             break
-    if chosen_cat is None:
-        return {"massage": f" cat {cat_id} not found"}, 404
+    # if chosen_cat is None:
+    #     return {"massage": f" cat {cat_id} not found"}, 404
 
     request_body = request.get_json()
     try:
@@ -144,16 +145,16 @@ def update_one_cat(cat_id):
     # delete chosen cat
 @cats_bp.route("/<cat_id>", methods=["DELETE"])
 def delete_one_cat(cat_id):
-    try:
-        cat_id = int (cat_id)
-    except ValueError:
-        rsp =  {"msg": f"Invalid id:{cat_id}"}
-        return jsonify(rsp), 400
+    # try:
+    #     cat_id = int (cat_id)
+    # except ValueError:
+    #     rsp =  {"msg": f"Invalid id:{cat_id}"}
+    #     return jsonify(rsp), 400
 
-    chosen_cat = Cat.query.get(cat_id)
-    if chosen_cat is None:
-        rsp =  {"massage": f" cat {cat_id} not found"}
-        return jsonify(rsp), 404
+    chosen_cat = get_cat_or_abort(cat_id)
+    # if chosen_cat is None:
+    #     rsp =  {"massage": f" cat {cat_id} not found"}
+    #     return jsonify(rsp), 404
 
     db.session.delete(chosen_cat)
     db.session.commit()
